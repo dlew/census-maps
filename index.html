@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0px; padding: 0px }
+  #map_canvas { height: 100% }
+</style>
+<script type="text/javascript"
+    src="http://maps.google.com/maps/api/js?sensor=false">
+</script>
+<script type="text/javascript" src="data.js"></script>
+<script type="text/javascript">
+// Data driving the script
+var Data = {};
+
+// References for each neighborhood
+Data.NH = {
+    CARAG: "CARAG",
+    ECCO: "ECCO",
+    EAST_ISLES: "EastIsles",
+    LOWRY_HILL: "LowryHill",
+    LOWRY_HILL_EAST: "LowryHillEast",
+}
+
+// Initial point data - should only be used once each
+// to initialize each region
+Data.NH_POINTS = {};
+Data.NH_POINTS[Data.NH.CARAG] = [
+    44.948357, -93.298275,
+    44.948353, -93.288109,
+    44.937676, -93.288227,
+    44.937684, -93.298382
+];
+Data.NH_POINTS[Data.NH.ECCO] =  [
+    44.948338, -93.298259,
+    44.937676, -93.298345,
+    44.937646, -93.304009,
+    44.943114, -93.30358,
+    44.948399, -93.306327
+];
+Data.NH_POINTS[Data.NH.EAST_ISLES] = [
+    44.948353, -93.29828,
+    44.948368, -93.304954,
+    44.951026, -93.304996,
+    44.952833, -93.302314,
+    44.953623, -93.301992,
+    44.954154, -93.30152,
+    44.955126, -93.301156,
+    44.955642, -93.30137,
+    44.956022, -93.301971,
+    44.956402, -93.30313,
+    44.956766, -93.303452,
+    44.957859, -93.303173,
+    44.960198, -93.30122,
+    44.96082, -93.30122,
+    44.960896, -93.292787,
+    44.955506, -93.2968,
+    44.952241, -93.298302,
+];
+Data.NH_POINTS[Data.NH.LOWRY_HILL] = [
+	44.96082, -93.301392,
+	44.963098, -93.303838,
+	44.963265, -93.303773,
+	44.963249, -93.303301,
+	44.966407, -93.30328,
+	44.966422, -93.304524,
+	44.968108, -93.304567,
+	44.968563, -93.304052,
+	44.969094, -93.302486,
+	44.969216, -93.299181,
+	44.968897, -93.297873,
+	44.969094, -93.296499,
+	44.969869, -93.295469,
+	44.969808, -93.29047,
+	44.969064, -93.290191,
+	44.968882, -93.288217,
+	44.966392, -93.28856,
+	44.960911, -93.292766,
+]
+Data.NH_POINTS[Data.NH.LOWRY_HILL_EAST] = [
+    44.948368, -93.29828,
+    44.952241, -93.298259,
+    44.955521, -93.296757,
+    44.962703, -93.291392,
+    44.966483, -93.288195,
+    44.948353, -93.288109,
+];
+
+// Filled by initializeNeighborhoods()
+Data.NH_Polys = {};
+
+// Stored elements
+var elInfoTable;
+
+function initialize() {
+    var latlng = new google.maps.LatLng(44.942263, -93.287144);
+    var myOptions = {
+        zoom: 13,
+        center: latlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    Data.map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+    google.maps.event.addListener(Data.map, 'click', function() {
+        // Deselect a neighborhood if user clicks somewhere off the map
+        if (lastNeighborhood) {
+            deselectNeighborhood(lastNeighborhood);
+        }
+    });
+
+    initializeNeighborhoods();
+
+    elInfoTable = document.getElementById("infotable");
+}
+
+var initializeNeighborhoods = function() {
+    for (var nh in Data.NH_POINTS) {
+        var points = Data.NH_POINTS[nh];
+        var gLatLngs = [];
+        for (var a = 0; a < points.length; a += 2) {
+            gLatLngs[gLatLngs.length] = new google.maps.LatLng(points[a], points[a + 1]);
+        }
+        Data.NH_Polys[nh] = new google.maps.Polygon({
+            paths: gLatLngs,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map: Data.map
+        });
+
+        var fun = (function() {
+            var name = nh;
+            return function() {
+                selectNeighborhood(name);
+            };
+        })();
+
+        google.maps.event.addListener(Data.NH_Polys[nh], 'click', fun);
+    }
+};
+
+var lastNeighborhood;
+var selectNeighborhood = function(name) {
+    // Deselect the previous neighborhood
+    if (lastNeighborhood) {
+        if (lastNeighborhood === name) {
+            return;
+        }
+        deselectNeighborhood(lastNeighborhood);
+    }
+
+    // Set the color of the selected neighborhood
+    Data.NH_Polys[name].setOptions({
+        strokeColor: "#0000FF",
+        fillColor: "#0000FF",
+    });
+
+    // Setup the info box on the right
+    var data = NH_DATA[name];
+
+    // Temporarily remove box while manipulating DOM
+    var tableParent = elInfoTable.parentNode;
+    tableParent.removeChild(elInfoTable);
+
+    var tableBody = document.createElement("tbody");
+
+    // Add new data
+    for (var index = 0; index < NH_SPEC.length; index++) {
+        var field = NH_SPEC[index];
+
+        var row = document.createElement("tr");
+
+        var subjectCell = document.createElement("td");
+        var subjectCellText = document.createTextNode(field["desc"]);
+        subjectCell.appendChild(subjectCellText);
+
+        var valueCell = document.createElement("td");
+        var valueCellText = document.createTextNode(data[field["field"]]);
+        valueCell.appendChild(valueCellText);
+
+        row.appendChild(subjectCell);
+        row.appendChild(valueCell);
+        tableBody.appendChild(row);
+    }
+
+    elInfoTable.appendChild(tableBody);
+
+    // Re-add the info table to the DOM
+    tableParent.appendChild(elInfoTable);
+
+    // Set the last neighborhood
+    lastNeighborhood = name;
+}
+
+var deselectNeighborhood = function(name) {
+    Data.NH_Polys[name].setOptions({
+        strokeColor: "#FF0000",
+        fillColor: "#FF0000",
+    });
+
+    while (elInfoTable.childNodes.length > 0) {
+        elInfoTable.removeChild(elInfoTable.childNodes[0]);
+    }
+}
+
+var compareNeighborhoods = function(el) {
+    switch(el.selectedIndex) {
+        case 0:
+            // Reset all neighborhoods
+            for (var poly in Data.NH_Polys) {
+                Data.NH_Polys[poly].setOptions({
+                    fillOpacity: 0.35
+                });
+            }
+            break;
+        case 1:
+            // Compare population
+            simpleComparison("pop_total");
+            break;
+        case 2:
+            // Compare female population
+            normalizedComparison("pop_female", "pop_total");
+            break;
+        case 3:
+            // Compare children under 6
+            normalizedComparison("pop_children", "pop_total");
+            break;
+        case 4:
+            // Compare mean commute time
+            simpleComparison("commute_mean");
+            break;
+        case 5:
+            // Compare median household income
+            simpleComparison("income_hh_median");
+            break;
+        case 6:
+            // Compare median family income
+            simpleComparison("income_family_median");
+            break;
+    }
+}
+
+var simpleComparison = function(fieldName) {
+    var total = 0;
+    for (var nameKey in Data.NH) {
+        total += NH_DATA[Data.NH[nameKey]][fieldName];
+    }
+
+    for (var nameKey in Data.NH) {
+        var name = Data.NH[nameKey];
+        Data.NH_Polys[name].setOptions({
+            fillOpacity: (NH_DATA[name][fieldName] / total)
+        });
+    }
+}
+
+var normalizedComparison = function(fieldName, normalizerFieldName) {
+    var total = 0;
+    for (var nameKey in Data.NH) {
+        var data = NH_DATA[Data.NH[nameKey]]
+        total += data[fieldName] / data[normalizerFieldName];
+    }
+
+    for (var nameKey in Data.NH) {
+        var name = Data.NH[nameKey];
+        var data = NH_DATA[Data.NH[nameKey]]
+        var percent = data[fieldName] / data[normalizerFieldName];
+        Data.NH_Polys[name].setOptions({
+            fillOpacity: (percent / total)
+        });
+    }
+}
+</script>
+</head>
+<body onload="initialize()">
+  <table style="width: 100%; height: 100%">
+    <tr style="height: 1px">
+        <td colspan="2"><h1>Dan's Minneapolis Census Map</h1></td>
+    </tr>
+    <tr style="height: 1px">
+        <td colspan="2">
+            <select onchange="compareNeighborhoods(this);">
+                <option></option>
+                <option>Population</option>
+                <option>% Female population</option>
+                <option>% Children under 6</option>
+                <option>Mean travel time</option>
+                <option>Median household income</option>
+                <option>Median family income</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:70%"><div id="map_canvas" style="width:100%; height:100%"></div></td>
+        <td><table id="infotable"></table></td>
+    </tr>
+  </table>
+</body>
+</html>
