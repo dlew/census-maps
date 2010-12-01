@@ -17,21 +17,59 @@ var Data = {};
 
 // References for each neighborhood
 Data.NH = {
+	BANCROFT: "Bancroft",
+	BRYANT: "Bryant",
     CARAG: "CARAG",
+    CENTRAL: "Central",
+    CORCORAN: "Corcoran",
     ECCO: "ECCO",
     EAST_ISLES: "EastIsles",
+    KING_FIELD: "KingField",
+    LYNDALE: "Lyndale",
     LOWRY_HILL: "LowryHill",
     LOWRY_HILL_EAST: "LowryHillEast",
+    PHILLIPS: "Phillips",
+    POWDERHORN_PARK: "PowderhornPark",
+    STANDISH: "Standish",
+    STEVENS_SQ_LORING_HGTS: "StevensSquareLoringHeights",
+    VENTURA_VILLAGE: "VenturaVillage",
+    WHITTIER: "Whittier",
 }
 
 // Initial point data - should only be used once each
 // to initialize each region
 Data.NH_POINTS = {};
+Data.NH_POINTS[Data.NH.BANCROFT] = [
+	44.926936, -93.26251,
+	44.934137, -93.26251,
+	44.934122, -93.24734,
+	44.926906, -93.247318,
+];
+Data.NH_POINTS[Data.NH.BRYANT] = [
+	44.926891, -93.274612,
+	44.934091, -93.274655,
+	44.934152, -93.262489,
+	44.926921, -93.26251,
+	44.926845, -93.27002,
+	44.926754, -93.271351,
+];
 Data.NH_POINTS[Data.NH.CARAG] = [
     44.948357, -93.298275,
     44.948353, -93.288109,
     44.937676, -93.288227,
     44.937684, -93.298382
+];
+Data.NH_POINTS[Data.NH.CENTRAL] = [
+	44.948338, -93.274806,
+	44.948338, -93.262682,
+	44.934152, -93.262446,
+	44.934122, -93.274655,
+];
+Data.NH_POINTS[Data.NH.CORCORAN] = [
+	44.937722, -93.247383,
+	44.948368, -93.247404,
+	44.948353, -93.238285,
+	44.937646, -93.231118,
 ];
 Data.NH_POINTS[Data.NH.ECCO] =  [
     44.948338, -93.298259,
@@ -58,6 +96,18 @@ Data.NH_POINTS[Data.NH.EAST_ISLES] = [
     44.960896, -93.292787,
     44.955506, -93.2968,
     44.952241, -93.298302,
+];
+Data.NH_POINTS[Data.NH.KING_FIELD] = [
+	44.919545, -93.288324,
+	44.937691, -93.288217,
+	44.937722, -93.274698,
+	44.919644, -93.274698,
+];
+Data.NH_POINTS[Data.NH.LYNDALE] = [
+	44.948353, -93.288109,
+	44.948338, -93.274806,
+	44.937752, -93.274655,
+	44.937676, -93.288217,
 ];
 Data.NH_POINTS[Data.NH.LOWRY_HILL] = [
 	44.96082, -93.301392,
@@ -87,6 +137,78 @@ Data.NH_POINTS[Data.NH.LOWRY_HILL_EAST] = [
     44.966483, -93.288195,
     44.948353, -93.288109,
 ];
+Data.NH_POINTS[Data.NH.PHILLIPS] = [
+	44.948293, -93.274806,
+	44.949796, -93.274591,
+	44.951952, -93.273346,
+	44.956143, -93.269935,
+	44.957328, -93.269527,
+	44.960911, -93.269484,
+	44.960896, -93.262553,
+	44.959104, -93.262553,
+	44.959142, -93.249861,
+	44.960942, -93.24985,
+	44.960775, -93.247619,
+	44.957358, -93.244185,
+	44.955551, -93.24307,
+	44.951907, -93.240838,
+	44.948353, -93.23822,
+];
+Data.NH_POINTS[Data.NH.POWDERHORN_PARK] = [
+	44.948353, -93.262639,
+	44.948353, -93.247404,
+	44.934091, -93.24734,
+	44.934137, -93.262467,
+];
+Data.NH_POINTS[Data.NH.STANDISH] = [
+	44.925098, -93.246052,
+	44.926906, -93.246052,
+	44.926906, -93.247318,
+	44.937691, -93.247383,
+	44.937707, -93.231118,
+	44.926921, -93.223672,
+	44.926875, -93.232126,
+	44.925068, -93.232126,
+];
+Data.NH_POINTS[Data.NH.STEVENS_SQ_LORING_HGTS] = [
+	44.962688, -93.287991,
+	44.965352, -93.288023,
+	44.964699, -93.287187,
+	44.964373, -93.286361,
+	44.964267, -93.285577,
+	44.964327, -93.284547,
+	44.964358, -93.284343,
+	44.96643, -93.276125,
+	44.966559, -93.274409,
+	44.966551, -93.273475,
+	44.96583, -93.269988,
+	44.962703, -93.269999,
+];
+Data.NH_POINTS[Data.NH.VENTURA_VILLAGE] = [
+	44.96085, -93.26957,
+	44.965785, -93.269763,
+	44.965921, -93.255215,
+	44.966255, -93.249979,
+	44.960911, -93.245816,
+	44.959696, -93.246911,
+	44.960896, -93.248348,
+	44.960911, -93.24985,
+	44.95915, -93.249872,
+	44.959104, -93.262575,
+	44.960911, -93.262532,
+];
+Data.NH_POINTS[Data.NH.WHITTIER] = [
+	44.962688, -93.288002,
+	44.962718, -93.27002,
+	44.956872, -93.269999,
+	44.956219, -93.270257,
+	44.953471, -93.272402,
+	44.951011, -93.274355,
+	44.949416, -93.275042,
+	44.948338, -93.27517,
+	44.948338, -93.288109,
+];
+
 
 // Filled by initializeNeighborhoods()
 Data.NH_Polys = {};
@@ -279,10 +401,11 @@ var normalizedComparison = function(fieldName, normalizerFieldName) {
 <body onload="initialize()">
   <table style="width: 100%; height: 100%">
     <tr style="height: 1px">
-        <td colspan="2"><h1>Dan's Minneapolis Census Map</h1></td>
+        <td colspan="2"><h1>Minneapolis Census Map</h1></td>
     </tr>
     <tr style="height: 1px">
         <td colspan="2">
+        	Compare neighborhood data:
             <select onchange="compareNeighborhoods(this);">
                 <option></option>
                 <option>Population</option>
