@@ -12,6 +12,12 @@
 </script>
 <script type="text/javascript" src="data.js"></script>
 <script type="text/javascript">
+// Controlling variables
+// This determines the max opacity a gradient can have when comparing neighborhoods
+// Theoretically when you do a comparison, the highest neighborhood
+// should have this gradient
+var MAX_OPACITY = .9;
+
 // Data driving the script
 var Data = {};
 
@@ -367,24 +373,30 @@ var compareNeighborhoods = function(el) {
 }
 
 var simpleComparison = function(fieldName) {
-    var total = 0;
+    var max = -1;
     for (var nameKey in Data.NH) {
-        total += NH_DATA[Data.NH[nameKey]][fieldName];
+    	var val = NH_DATA[Data.NH[nameKey]][fieldName];
+        if (val > max) {
+        	max = val;
+        }
     }
 
     for (var nameKey in Data.NH) {
         var name = Data.NH[nameKey];
         Data.NH_Polys[name].setOptions({
-            fillOpacity: (NH_DATA[name][fieldName] / total)
+            fillOpacity: ((NH_DATA[name][fieldName] / max) * MAX_OPACITY)
         });
     }
 }
 
 var normalizedComparison = function(fieldName, normalizerFieldName) {
-    var total = 0;
+	var max = -1;
     for (var nameKey in Data.NH) {
         var data = NH_DATA[Data.NH[nameKey]]
-        total += data[fieldName] / data[normalizerFieldName];
+        var val = data[fieldName] / data[normalizerFieldName];
+        if (val > max) {
+        	max = val;
+        }
     }
 
     for (var nameKey in Data.NH) {
@@ -392,7 +404,7 @@ var normalizedComparison = function(fieldName, normalizerFieldName) {
         var data = NH_DATA[Data.NH[nameKey]]
         var percent = data[fieldName] / data[normalizerFieldName];
         Data.NH_Polys[name].setOptions({
-            fillOpacity: (percent / total)
+            fillOpacity: ((percent / max) * MAX_OPACITY)
         });
     }
 }
