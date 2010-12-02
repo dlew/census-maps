@@ -19,11 +19,10 @@
 // should have this gradient
 var MAX_OPACITY = .9;
 
-// Data driving the script
-var Data = {};
+var map;
 
 // Filled by initializeNeighborhoods()
-Data.NH_Polys = {};
+var nhPolys = {};
 
 // Stored elements
 var elInfoTable;
@@ -35,9 +34,9 @@ function initialize() {
         center: latlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    Data.map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-    google.maps.event.addListener(Data.map, 'click', function() {
+    google.maps.event.addListener(map, 'click', function() {
         // Deselect a neighborhood if user clicks somewhere off the map
         if (lastNeighborhood) {
             deselectNeighborhood(lastNeighborhood);
@@ -56,14 +55,14 @@ var initializeNeighborhoods = function() {
         for (var a = 0; a < points.length; a += 2) {
             gLatLngs[gLatLngs.length] = new google.maps.LatLng(points[a], points[a + 1]);
         }
-        Data.NH_Polys[nh] = new google.maps.Polygon({
+        nhPolys[nh] = new google.maps.Polygon({
             paths: gLatLngs,
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: "#FF0000",
             fillOpacity: 0.35,
-            map: Data.map
+            map: map
         });
 
         var fun = (function() {
@@ -73,7 +72,7 @@ var initializeNeighborhoods = function() {
             };
         })();
 
-        google.maps.event.addListener(Data.NH_Polys[nh], 'click', fun);
+        google.maps.event.addListener(nhPolys[nh], 'click', fun);
     }
 };
 
@@ -88,7 +87,7 @@ var selectNeighborhood = function(name) {
     }
 
     // Set the color of the selected neighborhood
-    Data.NH_Polys[name].setOptions({
+    nhPolys[name].setOptions({
         strokeColor: "#0000FF",
         fillColor: "#0000FF",
     });
@@ -145,7 +144,7 @@ var selectNeighborhood = function(name) {
 }
 
 var deselectNeighborhood = function(name) {
-    Data.NH_Polys[name].setOptions({
+    nhPolys[name].setOptions({
         strokeColor: "#FF0000",
         fillColor: "#FF0000",
     });
@@ -161,8 +160,8 @@ var compareNeighborhoods = function(el) {
     switch(el.selectedIndex) {
         case 0:
             // Reset all neighborhoods
-            for (var poly in Data.NH_Polys) {
-                Data.NH_Polys[poly].setOptions({
+            for (var poly in nhPolys) {
+                nhPolys[poly].setOptions({
                     fillOpacity: 0.35
                 });
             }
@@ -179,13 +178,21 @@ var compareNeighborhoods = function(el) {
             // Compare children under 6
             normalizedComparison("pop_children", "pop_total");
             break;
-        case 4:
+		case 4:
+			// Compare workers 16 years and over
+			normalizedComparison("workers_over_16", "pop_total");
+            break;
+        case 5:
             // Compare mean commute time
             simpleComparison("commute_mean");
             break;
-        case 5:
+        case 6:
             // Compare median household income
             simpleComparison("income_hh_median");
+            break;
+        case 7:
+            // Compare mean earnings
+            simpleComparison("earnings_mean");
             break;
     }
 }
@@ -201,7 +208,7 @@ var simpleComparison = function(fieldName) {
 
     for (var nameKey in NEIGHBORHOODS) {
         var name = NEIGHBORHOODS[nameKey];
-        Data.NH_Polys[name].setOptions({
+        nhPolys[name].setOptions({
             fillOpacity: ((NH_DATA[name][fieldName] / max) * MAX_OPACITY)
         });
     }
@@ -221,7 +228,7 @@ var normalizedComparison = function(fieldName, normalizerFieldName) {
         var name = NEIGHBORHOODS[nameKey];
         var data = NH_DATA[name]
         var percent = data[fieldName] / data[normalizerFieldName];
-        Data.NH_Polys[name].setOptions({
+        nhPolys[name].setOptions({
             fillOpacity: ((percent / max) * MAX_OPACITY)
         });
     }
@@ -257,8 +264,10 @@ function addCommas(nStr)
                 <option>Population</option>
                 <option>% Female population</option>
                 <option>% Children under 6</option>
+                <option>% Workers 16 years and over</option>
                 <option>Mean travel time</option>
                 <option>Median household income</option>
+                <option>Mean earnings</option>
             </select>
         </td>
     </tr>

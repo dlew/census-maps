@@ -18,11 +18,13 @@ ECON_FORMAT = [
 
     # COMMUTING TO WORK
     # Mean travel time to work (minutes)
+    { "field": "workers_over_16", "row": 24, "col": 2, "desc": "Workers 16 years and over", "is_number": 1, "is_money": 0 },
     { "field": "commute_mean", "row": 31, "col": 2, "desc": "Mean travel time to work (minutes)", "is_number": 1, "is_money": 0 },
     
     # INCOME
     # Median household income
     { "field": "income_hh_median", "row": 2, "col": 6, "desc": "Median Household income", "is_number": 1, "is_money": 1 },
+    { "field": "earnings_mean", "row": 4, "col": 6, "desc": "Mean earnings", "is_number": 1, "is_money": 1 },
 
     # POPULATION BELOW POVERTY LEVEL
 
