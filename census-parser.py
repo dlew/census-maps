@@ -10,21 +10,19 @@ import xlrd
 ECON_FORMAT = [
     # EMPLOYMENT STATUS
     # Total Population 16 years and over
-    { "field": "pop_total", "row": 8, "col": 2, "desc": "Total Population 16 years and over" },
+    { "field": "pop_total", "row": 8, "col": 2, "desc": "Total Population 16 years and over", "is_number": 1, "is_money": 0 },
     # Females 16 years and over
-    { "field": "pop_female", "row": 17, "col": 2, "desc": "Females 16 years and over" },
+    { "field": "pop_female", "row": 17, "col": 2, "desc": "Females 16 years and over", "is_number": 1, "is_money": 0 },
     # Own children under 6 years
-    { "field": "pop_children", "row": 20, "col": 2, "desc": "Own children under 6 years" },
+    { "field": "pop_children", "row": 20, "col": 2, "desc": "Own children under 6 years", "is_number": 1, "is_money": 0 },
 
     # COMMUTING TO WORK
     # Mean travel time to work (minutes)
-    { "field": "commute_mean", "row": 31, "col": 2, "desc": "Mean travel time to work (minutes)" },
+    { "field": "commute_mean", "row": 31, "col": 2, "desc": "Mean travel time to work (minutes)", "is_number": 1, "is_money": 0 },
     
     # INCOME
     # Median household income
-    { "field": "income_hh_median", "row": 2, "col": 6, "desc": "Median Household income" },
-    # Median family income
-    { "field": "income_family_median", "row": 25, "col": 6, "desc": "Median family income" },
+    { "field": "income_hh_median", "row": 2, "col": 6, "desc": "Median Household income", "is_number": 1, "is_money": 1 },
 
     # POPULATION BELOW POVERTY LEVEL
 
@@ -36,7 +34,9 @@ def get_format_spec(format):
     for field in format:
         spec.append({
             "field": field["field"],
-            "desc": field["desc"]
+            "desc": field["desc"],
+            "is_number": field["is_number"],
+            "is_money": field["is_money"],
         })
     return spec
 

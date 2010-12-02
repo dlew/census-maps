@@ -29,9 +29,9 @@ Data.NH_Polys = {};
 var elInfoTable;
 
 function initialize() {
-    var latlng = new google.maps.LatLng(44.942263, -93.287144);
+    var latlng = new google.maps.LatLng(44.971356, -93.267746);
     var myOptions = {
-        zoom: 13,
+        zoom: 12,
         center: latlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
@@ -125,7 +125,14 @@ var selectNeighborhood = function(name) {
     for (var index = 0; index < NH_SPEC.length; index++) {
         var field = NH_SPEC[index];
 
-		addRow(field["desc"], data[field["field"]]);
+		var val = data[field["field"]];
+		if (field["is_number"]) {
+			val = addCommas(val);
+		}
+		if (field["is_money"]) {
+			val = "$" + val;
+		}
+		addRow(field["desc"], val);
     }
 
     elInfoTable.appendChild(tableBody);
@@ -146,6 +153,8 @@ var deselectNeighborhood = function(name) {
     while (elInfoTable.childNodes.length > 0) {
         elInfoTable.removeChild(elInfoTable.childNodes[0]);
     }
+
+    lastNeighborhood = null;
 }
 
 var compareNeighborhoods = function(el) {
@@ -177,10 +186,6 @@ var compareNeighborhoods = function(el) {
         case 5:
             // Compare median household income
             simpleComparison("income_hh_median");
-            break;
-        case 6:
-            // Compare median family income
-            simpleComparison("income_family_median");
             break;
     }
 }
@@ -221,6 +226,19 @@ var normalizedComparison = function(fieldName, normalizerFieldName) {
         });
     }
 }
+
+function addCommas(nStr)
+{
+	nStr += '';
+	x = nStr.split('.');
+	x1 = x[0];
+	x2 = x.length > 1 ? '.' + x[1] : '';
+	var rgx = /(\d+)(\d{3})/;
+	while (rgx.test(x1)) {
+		x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+	return x1 + x2;
+}
 </script>
 </head>
 <body onload="initialize()">
@@ -241,7 +259,6 @@ var normalizedComparison = function(fieldName, normalizerFieldName) {
                 <option>% Children under 6</option>
                 <option>Mean travel time</option>
                 <option>Median household income</option>
-                <option>Median family income</option>
             </select>
         </td>
     </tr>
