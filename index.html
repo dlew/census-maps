@@ -102,23 +102,30 @@ var selectNeighborhood = function(name) {
 
     var tableBody = document.createElement("tbody");
 
-    // Add new data
-    for (var index = 0; index < NH_SPEC.length; index++) {
-        var field = NH_SPEC[index];
-
+	// Add name of neighborhood
+	var addRow = function(subject, value) {
         var row = document.createElement("tr");
 
         var subjectCell = document.createElement("td");
-        var subjectCellText = document.createTextNode(field["desc"]);
+        var subjectCellText = document.createTextNode(subject);
         subjectCell.appendChild(subjectCellText);
 
         var valueCell = document.createElement("td");
-        var valueCellText = document.createTextNode(data[field["field"]]);
+        var valueCellText = document.createTextNode(value);
         valueCell.appendChild(valueCellText);
 
         row.appendChild(subjectCell);
         row.appendChild(valueCell);
         tableBody.appendChild(row);
+	};
+
+	addRow("Neighborhood", name);
+
+    // Add new data
+    for (var index = 0; index < NH_SPEC.length; index++) {
+        var field = NH_SPEC[index];
+
+		addRow(field["desc"], data[field["field"]]);
     }
 
     elInfoTable.appendChild(tableBody);
