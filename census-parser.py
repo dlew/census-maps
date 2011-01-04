@@ -12,7 +12,7 @@ ECON_FORMAT = [
     # Total Population 16 years and over
     { "field": "pop_total", "row": 8, "col": 2, "desc": "Total Population 16 years and over", "is_number": 1, "is_money": 0 },
     # Females 16 years and over
-    { "field": "pop_female", "row": 17, "col": 2, "desc": "Females 16 years and over", "is_number": 1, "is_money": 0 },
+    { "field": "pop_female", "row": 16, "col": 2, "desc": "Females 16 years and over", "is_number": 1, "is_money": 0 },
     # Own children under 6 years
     { "field": "pop_children", "row": 20, "col": 2, "desc": "Own children under 6 years", "is_number": 1, "is_money": 0 },
 
