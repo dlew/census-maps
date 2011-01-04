@@ -1,0 +1,8 @@
+Minneapolis Map Project
+-----------------------
+
+This is a personal project mapping Minneapolis census and crime data to an
+interactive Google Maps interface.
+
+The code could be adapted (with some difficulty) to any collection of
+locations but it's pretty specific to Minneapolis at the moment.
